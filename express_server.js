@@ -2,6 +2,31 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+function generateRandomString() {
+  let results = '';
+  const char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+  let charLength = char.length
+  for (let i = 0; i < 6; i ++) {
+    results += char.charAt(Math.floor(Math.random() * charLength))
+  }
+  return results;
+}
+
+app.post("/urls", (req, res) => {
+    let shortURL = generateRandomString();
+    urlDatabase[shortURL] =  req.body.longURL
+    console.log(urlDatabase[shortURL])
+    res.redirect(`/urls/${shortURL}`);
+
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.set('view engine', 'ejs');
 
 app.get('/urls', (req, res) => {
@@ -9,9 +34,9 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
-  res.render("urls_show", templateVars);
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 const urlDatabase = {
@@ -19,9 +44,6 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-app.get('/', (req, res) => {
-  res.send('Hello!');
-});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
