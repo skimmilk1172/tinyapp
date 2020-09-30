@@ -53,13 +53,18 @@ app.get("/urls/new", (req, res) => {
   const templateVars = {
     username: req.cookies["username"],
   };
-  res.render("urls_new");
+  res.render("urls_new", templateVars);
 });
 
 app.set('view engine', 'ejs');
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+  let cookieID = req.cookies["user_id"];
+  let userObject = users[cookieID];
+  console.log(cookieID);
+  const templateVars = { 
+  urls: urlDatabase, 
+  user: userObject};
   res.render('urls_index', templateVars);
 });
 
@@ -86,21 +91,37 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.get('/register', (req,res) => {
-  const templateVars = {username: req.cookies['username']}
-  res.render('urls_register', templateVars);
+app.get("/register", (req, res) => {
+  const templateVars = {
+  user: null
+  };
+  res.render("urls_register", templateVars);
 });
 
-app.post('/register', (req, res) => {
-  const email = req.body.email
-  const password = req.body.password
-  console.log(email)
-  console.log(password)
-  addNewUser(email, password);
-  console.log(users);
-  res.redirect('/urls');
-
-})
+app.post("/register", (req, res) => {
+  const {id, email, password} = req.body;
+  if (email === '' || password === '') {
+    return res.redirect("/400")
+  } 
+  let foundUser; 
+  for (let id in users){
+    if (users[id].email === email) {
+    foundUser = usersDataBase[id]; 
+    break
+    }
+  }
+  if (foundUser) {
+    return res.redirect("/400")
+  }
+  let userID = generateRandomString(5);
+  usersDataBase[userID] = { 
+    id: userID,
+    email: req.body.email,
+    password: req.body.password
+  }
+  res.cookie('user_id', userID);
+  return res.redirect("/hello")
+});
 
 app.post('/urls/:id/delete', (req, res) => {
   delete urlDatabase[req.params.id]
