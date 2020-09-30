@@ -17,6 +17,30 @@ function generateRandomString() {
   return results;
 }
 
+const addNewUser = (email, password) => {
+  const userID = generateRandomString();
+  const newUser = {
+    id: userID,
+    email,
+    password
+  }
+  users[userID] = newUser;
+  return userID;
+};
+
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 app.post("/urls", (req, res) => {
     let shortURL = generateRandomString();
     urlDatabase[shortURL] =  req.body.longURL
@@ -67,6 +91,16 @@ app.get('/register', (req,res) => {
   res.render('urls_register', templateVars);
 });
 
+app.post('/register', (req, res) => {
+  const email = req.body.email
+  const password = req.body.password
+  console.log(email)
+  console.log(password)
+  addNewUser(email, password);
+  console.log(users);
+  res.redirect('/urls');
+
+})
 
 app.post('/urls/:id/delete', (req, res) => {
   delete urlDatabase[req.params.id]
