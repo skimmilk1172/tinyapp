@@ -98,6 +98,13 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+app.get('/login', (req, res) => {
+  const templateVars = {
+    user: null
+    };
+    res.render("urls_login", templateVars);
+})
+
 app.post("/register", (req, res) => {
   const {id, email, password} = req.body;
   if (email === '' || password === '') {
@@ -114,13 +121,13 @@ app.post("/register", (req, res) => {
     return res.redirect("/400")
   }
   let userID = generateRandomString(5);
-  usersDataBase[userID] = { 
+  users[userID] = { 
     id: userID,
     email: req.body.email,
     password: req.body.password
   }
   res.cookie('user_id', userID);
-  return res.redirect("/hello")
+  return res.redirect("/urls")
 });
 
 app.post('/urls/:id/delete', (req, res) => {
