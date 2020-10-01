@@ -108,17 +108,17 @@ app.get('/login', (req, res) => {
 app.post("/register", (req, res) => {
   const {id, email, password} = req.body;
   if (email === '' || password === '') {
-    return res.redirect("/400")
+    return res.status(400).send("Please enter a valid email and/or password")
   } 
   let foundUser; 
   for (let id in users){
     if (users[id].email === email) {
-    foundUser = usersDataBase[id]; 
+    foundUser = users[id]; 
     break
     }
   }
   if (foundUser) {
-    return res.redirect("/400")
+    return res.status(400).send("Email is already in use")
   }
   let userID = generateRandomString(5);
   users[userID] = { 
