@@ -127,6 +127,7 @@ app.post("/register", (req, res) => {
     password: req.body.password
   }
   res.cookie('user_id', userID);
+  console.log(users)
   return res.redirect("/urls")
 });
 
@@ -141,9 +142,16 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  console.log(req.body.user);
-  res.cookie('user_id', req.body.user);
-  res.redirect('/urls');
+ if (req.body.email === '' || req.body.password === '') {
+   res.status(403).send("Email and/or Password Required");
+ }
+ for (const user in users) {
+   if (users[user].email === req.body.email) {
+    res.cookie('user_id', users[user].id);
+    return res.redirect('/urls');
+   } 
+ }
+  return res.status(403).send("Email not found");
 });
 
 app.post('/logout', (req, res) => {
