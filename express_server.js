@@ -42,30 +42,33 @@ const users = {
   }
 }
 
+//----------------------------MISC.-----------------------------
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+const urlDatabase = {
+  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: 'userRandomID'},
+  "9sm5xK": {longURL: "http://www.google.com", userID: 'user2RandomID'}
+};
+app.set('view engine', 'ejs');
+
+//---------------------------GETS-----------------------------
+
 app.get("/urls/new", (req, res) => {
   const templateVars = {urls: urlDatabase,
     user: findUser(req.session.user_id, users)}; 
 templateVars.user ? res.render("urls_new", templateVars) : res.redirect("/login")
 });
 
-app.set('view engine', 'ejs');
 
 app.get("/urls", (req, res) => {
   const urlForUser = findMyUrls(req.session.user_id, urlDatabase)
   const templateVars = {urls: urlForUser, user: findUser(req.session.user_id, users)};
-  console.log(templateVars.urls);
+  // console.log(templateVars.urls);
   templateVars.user ? res.render("urls_index", templateVars) : res.redirect("/login");
 });
 
-const urlDatabase = {
-  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: 'userRandomID'},
-  "9sm5xK": {longURL: "http://www.google.com", userID: 'user2RandomID'}
-};
-
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -96,6 +99,8 @@ app.get('/login', (req, res) => {
     user: findUser(req.session.user_id, users)};
 res.render("urls_login", templateVars);
 });
+
+//---------------------------POSTS----------------------------
 
 app.post("/register", (req, res) => {
   const {id, email, password} = req.body;
@@ -136,29 +141,25 @@ app.post('/urls/:id/delete', (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.id].userID) {
-    console.log(req.body.id, 'req param', req.session.id, 'session')
+    // console.log(req.body.id, 'req param', req.session.id, 'session')
     urlDatabase[req.body.id] = req.body.newURL; 
     res.redirect("/urls");
   } else {
     res.redirect("/login");
   }    
 }); 
-// const urlDatabase = {
-//   "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: 'userRandomID'},
-//   "9sm5xK": {longURL: "http://www.google.com", userID: 'user2RandomID'}
-// };
 
 app.post("/urls", (req, res) => {
   let id = generateRandomString();
   urlDatabase[id] =  {longURL: req.body.longURL, userID: req.session.user_id};
-  console.log(urlDatabase[id])
+  // console.log(urlDatabase[id])
   res.redirect(`/urls/${id}`);
 });
 
 app.post('/login', (req, res) => {
   if (!getUserByEmail(req.body.email, users)) {
-    res.redirect("/register");
- }
+    return res.status(403).send("Email and/or Password Invalid");
+  }
  for (const user in users) {
    if (users[user].email === req.body.email) {
     if (bcrypt.compareSync(req.body.password, getUserByEmail(req.body.email, users).password)) {

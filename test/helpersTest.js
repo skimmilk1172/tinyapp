@@ -24,11 +24,11 @@ describe('getUserByEmail', function() {
       password: "purple-monkey-dinosaur"
     };
     // Write your assert statement here
-    assert.deepEqual(expectedOutput, user)
+    assert.deepEqual(expectedOutput, user);
   });
   it('should return false an not valid email', function() {
     const user = getUserByEmail("hello_whatsup@good.ca", testUsers)
     const expectedOutput = false;
-    assert.equal(user, expectedOutput)
+    assert.equal(user, expectedOutput);
   });
 });
