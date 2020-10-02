@@ -53,19 +53,16 @@ app.get("/urls/new", (req, res) => {
 
 app.set('view engine', 'ejs');
 
-app.get('/urls', (req, res) => {
-let myUrls = {};
-for (const url in urlDatabase) {
-  if (req.cookies['user_id'] === urlDatabase[url].userID) {
-    myUrls[url] = urlDatabase[url];
+app.get("/urls", (req, res) => {
+  let urlForUser = {};
+  for (const url in urlDatabase) {
+    if (req.cookies["user_id"] === urlDatabase[url].userID) {
+      urlForUser[url] = urlDatabase[url];
+    }
   }
-}
-console.log(`My Urls : ${JSON.stringify(myUrls)}`);
-const templateVars = {
-  urls: myUrls,
-  user: users[req.cookies['user_id']]
-};
-  res.render('urls_index', templateVars);
+  const templateVars = {urls: urlForUser, user: users[req.cookies["user_id"]]};
+  console.log(templateVars.urls);
+  templateVars.user ? res.render("urls_index", templateVars) : res.redirect("/login");
 });
 
 const urlDatabase = {
