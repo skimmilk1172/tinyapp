@@ -24,7 +24,7 @@ const addNewUser = (email, password) => {
     id: userID,
     email,
     password
-  };
+  }
   users[userID] = newUser;
   return userID;
 };
@@ -167,8 +167,8 @@ app.post('/login', (req, res) => {
     return res.redirect('/urls');
     };
    return res.status(403).send("Email and/or Password Incorrect");
-    };
-  };
+    }
+  }
 });
 
 app.post('/logout', (req, res) => {

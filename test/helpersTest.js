@@ -22,7 +22,7 @@ describe('getUserByEmail', function() {
       id: "userRandomID", 
       email: "user@example.com", 
       password: "purple-monkey-dinosaur"
-    };
+    }
     // Write your assert statement here
     assert.deepEqual(expectedOutput, user);
   });
