@@ -171,12 +171,13 @@ app.post('/login', (req, res) => {
  }
  for (const user in users) {
    if (users[user].email === req.body.email) {
-     if(bcrypt.compareSync(req.body.password, users[user].password))
+     if(bcrypt.compareSync(req.body.password, users[user].password)) {
     res.cookie('user_id', users[user].id);
     return res.redirect('/urls');
-   } 
- }
-  return res.status(403).send("Email not found");
+   }
+   return res.status(403).send("Email and/or Password Incorrect");
+  }
+  }
 });
 
 app.post('/logout', (req, res) => {
